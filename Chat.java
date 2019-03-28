@@ -41,7 +41,7 @@ public class Chat implements Runnable {
          
         //Configures the writer and reader object that communicates with the server
         try {
-            Socket socketClient = new Socket("localhost",1234);
+            Socket socketClient = new Socket("SERVER IP HERE",1234);
             writer = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
             reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
         } catch(Exception e) {

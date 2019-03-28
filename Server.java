@@ -17,7 +17,7 @@ class Server implements Runnable {
      * the server to listen for multiple clients by assigning each a thread.
      */
     public static void main(String[] args) throws Exception {
-        ServerSocket mysocket = new ServerSocket(1234, 2, 141.165);
+        ServerSocket mysocket = new ServerSocket(1234);
         System.out.println("Chat Server operational");
         while(true) {
             Socket sock = mysocket.accept();

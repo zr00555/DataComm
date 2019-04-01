@@ -17,7 +17,9 @@ class Server implements Runnable {
      * the server to listen for multiple clients by assigning each a thread.
      */
     public static void main(String[] args) throws Exception {
-        InetAddress addr = InetAddress.getByName("SERVER IP HERE"); //PUT SAME SERVER IN CLIENTS
+    	String IPAddress = new String(InetAddress.getLocalHost().getHostAddress()); //Get local LAN IP
+		System.out.println(IPAddress);
+        InetAddress addr = InetAddress.getByName(IPAddress); //PUT SAME SERVER IN CLIENTS
         ServerSocket mysocket = new ServerSocket(1234, 10, addr);
         System.out.println("Chat Server operational");
         while(true) {
@@ -48,7 +50,7 @@ class Server implements Runnable {
             clients.add(writer); 
             while(true) {
                 String data1 = reader.readLine().trim();
-                System.out.println("Client logs: " + data1);      
+                System.out.println("Client logs - " + data1);      
                  
                 /*
                  * Iterates through the vector  object that holds all the clients
@@ -67,7 +69,7 @@ class Server implements Runnable {
                 }
             }
         } catch(Exception e) {
-            System.out.println("Client " + (numClients) + " has terminated its connection");
+            System.out.println("Client " + (numClients) +  " has terminated its connection");
             numClients--;
         }
     }

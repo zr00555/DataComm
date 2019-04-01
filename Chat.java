@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @SuppressWarnings("resource")
 
@@ -14,6 +16,8 @@ public class Chat implements Runnable {
 	public String login = "placeholder";
 	BufferedWriter writer;
 	BufferedReader reader;
+	SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");  
+	Date date;
 
 	/*
 	 * Bulk of the client-side program that creates a use interface and connects the
@@ -38,6 +42,7 @@ public class Chat implements Runnable {
 		p2.add(tArea, BorderLayout.CENTER);
 		p2.add(p1, BorderLayout.SOUTH);
 		f.setContentPane(p2);
+		
 
 		// Configures the writer and reader object that communicates with the server
 		try {
@@ -46,7 +51,8 @@ public class Chat implements Runnable {
 			Socket socketClient = new Socket(IPAddress, 1234); // Enter custom IP for connecting to a different host
 			writer = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
 			reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
-			writer.write("(" + login + ")" + " has connected.");
+			date = new Date();
+			writer.write("[" + formatter.format(date) + "] " + "" + login + "" + " has connected.");
 			writer.write("\r\n");
 			writer.flush();
 		} catch (Exception e) {
@@ -57,7 +63,8 @@ public class Chat implements Runnable {
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				String message = tField.getText();
-				String str = login + ": " + message;
+				date = new Date();
+				String str = "[" + formatter.format(date) + "] " +  login + ": " + message;
 				if (message.length() != 0) { // Can't send a blank message
 					tField.setText("");
 					try {
@@ -78,7 +85,8 @@ public class Chat implements Runnable {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					String message = tField.getText();
-					String str = login + ": " + message;
+					date = new Date();
+					String str = "[" + formatter.format(date) + "] " +  login + ": " + message;
 					if (message.length() != 0) {
 						tField.setText("");
 						try {

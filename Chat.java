@@ -14,47 +14,68 @@ public class Chat implements Runnable {
 	public JTextField tField;
 	public JTextArea tArea;
 	public String login = "placeholder";
-	BufferedWriter writer;
-	BufferedReader reader;
-	SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");  
+	
+	BufferedWriter writer; //Server writer
+	BufferedReader reader; //Server reader
+	
+	SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss"); //24hr date format for timestamps
 	Date date;
+	String desktop = new String(System.getProperty("user.home") + "/Desktop"); //Users desktop directory location
+	File chatHistory = new File(desktop, "ChatHistory.txt"); //Create new file on desktop
+	BufferedWriter out; //Local text file writer
+	
 
-	/*
-	 * Bulk of the client-side program that creates a use interface and connects the
-	 * client to the server at 127.0.0.1:1234
-	 */
 	public Chat(String str) {
-		// GUI
+		// GUI using Swing
+		
+		//Create frame
 		login = str;
 		JFrame f = new JFrame("Chatroom");
 		f.setSize(500, 500);
+		
+		//Set individual panels
 		JPanel p1 = new JPanel();
 		p1.setLayout(new BorderLayout());
 		JPanel p2 = new JPanel();
 		p2.setLayout(new BorderLayout());
 		tField = new JTextField();
 		p1.add(tField, BorderLayout.CENTER);
+		
+		//Add buttons
 		JButton b1 = new JButton("Send");
 		JButton b2 = new JButton("Disconnect");
+		
+		//Arrange panels and buttons
 		p1.add(b1, BorderLayout.EAST);
 		p1.add(b2, BorderLayout.SOUTH);
+		
+		//Add message and history chat boxes
 		tArea = new JTextArea();
 		p2.add(tArea, BorderLayout.CENTER);
 		p2.add(p1, BorderLayout.SOUTH);
 		f.setContentPane(p2);
+		tArea.setEditable(false); //Chat history box not editable
 		
 
 		// Configures the writer and reader object that communicates with the server
 		try {
-			String IPAddress = new String(InetAddress.getLocalHost().getHostAddress());
-			System.out.println(IPAddress);
-			Socket socketClient = new Socket(IPAddress, 1234); // Enter custom IP for connecting to a different host
-			writer = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream()));
-			reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
+			out = new BufferedWriter(new FileWriter(chatHistory, true)); //Initialize writer for chat history txt file
+			
+			String IPAddress = new String(InetAddress.getLocalHost().getHostAddress()); //Get local machine IP address, change to target IP if not hosted on your machine
+			System.out.println("Connected to " + IPAddress);
+			Socket socketClient = new Socket(IPAddress, 1234); // Enter custom IP for connecting to a different host, initialized socket to specified IP and port
+			
+			//Reader & writer for writing data to the server
+			writer = new BufferedWriter(new OutputStreamWriter(socketClient.getOutputStream())); //Connect writer to server socket
+			reader = new BufferedReader(new InputStreamReader(socketClient.getInputStream())); //Connect reader to server socket
+			
+			//Writing data to the local ChatHistory.txt (out) and to the server (writer)
 			date = new Date();
-			writer.write("[" + formatter.format(date) + "] " + "" + login + "" + " has connected.");
+			writer.write("[" + formatter.format(date) + "] " + "" + login + "" + " has connected."); //Write when a new user has connected to server
+			out.write("[" + formatter.format(date) + "] " + "" + login + "" + " has connected." + "\n"); //Write when new user has connected to text file
 			writer.write("\r\n");
 			writer.flush();
+			out.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -62,17 +83,21 @@ public class Chat implements Runnable {
 		// Action listener for the send button, sends username + message to server
 		b1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				String message = tField.getText();
+				String message = tField.getText(); //Grab message string from textbox
 				date = new Date();
-				String str = "[" + formatter.format(date) + "] " +  login + ": " + message;
+				String str = ("[" + formatter.format(date) + "] " +  login + ": " + message); //Formatted message to add timestamp and username
 				if (message.length() != 0) { // Can't send a blank message
-					tField.setText("");
+					tField.setText(""); //Reset textbox
 					try {
-						writer.write(str);
+						//Send message to server and write to text file
+						writer.write(str); //Send message to server
+						out.write(str + "\n"); //Write message to text file
 						writer.write("\r\n");
 						writer.flush();
+						out.flush();
 					} catch (Exception e) {
-						System.out.println("Cannot send messages without a running chatserver!");
+						System.out.println("Cannot send messages without a running chatserver!"); //Catch if server is not running and exit client
+						System.out.println(e.getStackTrace());
 						System.exit(0);
 					}
 				}
@@ -84,17 +109,21 @@ public class Chat implements Runnable {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					String message = tField.getText();
+					String message = tField.getText(); //Grab message string from textbox
 					date = new Date();
-					String str = "[" + formatter.format(date) + "] " +  login + ": " + message;
-					if (message.length() != 0) {
-						tField.setText("");
+					String str = ("[" + formatter.format(date) + "] " +  login + ": " + message); //Formatted message to add timestamp and username
+					if (message.length() != 0) { // Can't send a blank message
+						tField.setText(""); //Reset textbox
 						try {
-							writer.write(str);
+							//Send message to server and write to text file
+							writer.write(str); //Send message to server
+							out.write(str + "\n"); //Write message to text file
 							writer.write("\r\n");
 							writer.flush();
+							out.flush();
 						} catch (Exception ex) {
-							System.out.println("Cannot send messages without a running chatserver!");
+							System.out.println("Cannot send messages without a running chatserver!"); //Catch if server is not running and exit client
+							System.out.println(ex.getStackTrace());
 							System.exit(0);
 						}
 					}
@@ -104,32 +133,32 @@ public class Chat implements Runnable {
 
 			@Override
 			public void keyReleased(KeyEvent arg0) {
-				// TODO Auto-generated method stub
-
+				
 			}
 
 			@Override
 			public void keyTyped(KeyEvent arg0) {
-				// TODO Auto-generated method stub
-
+				
 			}
 
 		});
 
-		// End button event
+		// Disconnect button event
 		b2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev2) {
 				try {
-					writer.write("(" + login + ")" + " has disconnected.");
+					writer.write("[" + formatter.format(date) + "] " + login + " has disconnected."); //Write to server whenever user disconnects
+					out.write("[" + formatter.format(date) + "] " + login + " has disconnected." + "\n"); //Write to text file whenever user disconnects
 					writer.write("\r\n");
 					writer.flush();
+					out.flush();
 					System.exit(0);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		});
+		
 		f.setVisible(true);
 	}
 
@@ -137,9 +166,9 @@ public class Chat implements Runnable {
 	public void run() {
 		try {
 			String serverMsg = "";
-			while ((serverMsg = reader.readLine()) != null) {
+			while ((serverMsg = reader.readLine()) != null) { //Retrieves message broadcasted by the server using reader
 				System.out.println("Chatserver log: " + serverMsg);
-				tArea.append(serverMsg + "\n");
+				tArea.append(serverMsg + "\n"); //Appends message from server in textbox
 			}
 		} catch (Exception e) {
 			System.out.println("Chat Server not running!");

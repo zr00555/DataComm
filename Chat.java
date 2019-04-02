@@ -6,6 +6,8 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+//Authors: Zachary Reese, Gregory Disser, Jeffrey Neal
+
 @SuppressWarnings("resource")
 
 //Client-side program that connects to the chatroom

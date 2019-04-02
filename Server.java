@@ -1,7 +1,9 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
- 
+
+//Authors: Zachary Reese, Gregory Disser, Jeffrey Neal
+
 @SuppressWarnings({"rawtypes", "resource", "unchecked"})
    
 //Server-side program that hosts the chatroom

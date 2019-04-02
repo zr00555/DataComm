@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+//Authors: Zachary Reese, Gregory Disser, Jeffrey Neal
 
  //Creates an instance of the client that connects to the chatroom.
  //Prompts user for a screen name and will pop up with the gui after

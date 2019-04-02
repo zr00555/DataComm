@@ -48,7 +48,6 @@ class Server implements Runnable {
                 String broadcast = reader.readLine().trim(); //Gets message from reader queue
                 System.out.println("Client logs - " + broadcast);      
                  
-                
                  //Iterates through the arraylist that holds all the clients
                  //Reads the stored writer objects and broadcasts the message to all clients
                 for (int i = 0; i < clients.size(); i++) {
@@ -58,13 +57,21 @@ class Server implements Runnable {
                         bw.write("\r\n");
                         bw.flush();
                     } catch(Exception e) {
-                        e.printStackTrace();
+                    	//If server broadcasts to a disconnected client, remove disconnected client from client arraylist
+                    	System.out.println("Client removed from arraylist");
+                        clients.remove(i);
                     }
                 }
+                
             }
         } catch(Exception e) {
-            System.out.println("Client " + (numClients) +  " has terminated its connection");
-            numClients--;
+            numClients--; //If a client disconnects, decrement number of clients
+            
+            //If all users have disconnected from server, terminate server
+            if(numClients == 0) {
+            	System.out.println("All users diconnected, shutting down server");
+            	System.exit(0);
+            }
         }
     }
 }

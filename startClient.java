@@ -1,3 +1,5 @@
+package chatServer;
+
 import javax.swing.*;
 
 //Authors: Zachary Reese, Gregory Disser, Jeffrey Neal

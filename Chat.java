@@ -1,3 +1,5 @@
+package chatServer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -74,7 +76,7 @@ public class Chat implements Runnable {
 			//Writing data to the local ChatHistory.txt (out) and to the server (writer)
 			date = new Date();
 			writer.write("[" + formatter.format(date) + "] " + "" + login + "" + " has connected."); //Write when a new user has connected to server
-			out.write("[" + formatter.format(date) + "] " + "" + login + "" + " has connected." + "\n"); //Write when new user has connected to text file
+			out.write("[" + formatter.format(date) + "] " + "" + login + "" + " has connected." + "\r\n"); //Write when new user has connected to text file
 			writer.write("\r\n");
 			writer.flush();
 			out.flush();
@@ -93,7 +95,7 @@ public class Chat implements Runnable {
 					try {
 						//Send message to server and write to text file
 						writer.write(str); //Send message to server
-						out.write(str + "\n"); //Write message to text file
+						out.write(str + "\r\n"); //Write message to text file
 						writer.write("\r\n");
 						writer.flush();
 						out.flush();
@@ -119,7 +121,7 @@ public class Chat implements Runnable {
 						try {
 							//Send message to server and write to text file
 							writer.write(str); //Send message to server
-							out.write(str + "\n"); //Write message to text file
+							out.write(str + "\r\n"); //Write message to text file
 							writer.write("\r\n");
 							writer.flush();
 							out.flush();
@@ -150,7 +152,7 @@ public class Chat implements Runnable {
 			public void actionPerformed(ActionEvent ev2) {
 				try {
 					writer.write("[" + formatter.format(date) + "] " + login + " has disconnected."); //Write to server whenever user disconnects
-					out.write("[" + formatter.format(date) + "] " + login + " has disconnected." + "\n"); //Write to text file whenever user disconnects
+					out.write("[" + formatter.format(date) + "] " + login + " has disconnected." + "\r\n"); //Write to text file whenever user disconnects
 					writer.write("\r\n");
 					writer.flush();
 					out.flush();
@@ -170,7 +172,7 @@ public class Chat implements Runnable {
 			String serverMsg = "";
 			while ((serverMsg = reader.readLine()) != null) { //Retrieves message broadcasted by the server using reader
 				System.out.println("Chatserver log: " + serverMsg);
-				tArea.append(serverMsg + "\n"); //Appends message from server in textbox
+				tArea.append(serverMsg + "\r\n"); //Appends message from server in textbox
 			}
 		} catch (Exception e) {
 			System.out.println("Chat Server not running!");
